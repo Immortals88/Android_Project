@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.bytedance.androidcamp.network.dou.api.IMiniDouyinService;
+import com.bytedance.androidcamp.network.dou.listView.MyListAdapter;
 import com.bytedance.androidcamp.network.dou.model.GetVideoResponse;
 import com.bytedance.androidcamp.network.dou.model.PostVideoResponse;
 import com.bytedance.androidcamp.network.dou.model.Video;
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private Uri mSelectedVideo;
     public Button mBtn;
     private Button mBtnRefresh;
+    private MyListAdapter mAdapter;
 
     // TODO 8: initialize retrofit & miniDouyinService
     private Retrofit retrofit=new Retrofit.Builder()
@@ -91,52 +93,12 @@ public class MainActivity extends AppCompatActivity {
         mBtnRefresh = findViewById(R.id.btn_refresh);
     }
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder {
-        public ImageView img;
-        public TextView username;
-
-        public MyViewHolder(@NonNull View itemView) {
-            super(itemView);
-            img = itemView.findViewById(R.id.img);
-            username=itemView.findViewById(R.id.tv_username);
-        }
-
-        public void bind(final Activity activity, final Video video) {
-            ImageHelper.displayWebImage(video.getImageUrl(), img);
-            username.setText(video.getUserName());
-            img.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    VideoActivity.launch(activity, video.getVideoUrl());
-                }
-            });
-        }
-    }
-
     private void initRecyclerView() {
         mRv = findViewById(R.id.rv);
         StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
         mRv.setLayoutManager(staggeredGridLayoutManager);
-        mRv.setAdapter(new RecyclerView.Adapter<MyViewHolder>() {
-            @NonNull
-            @Override
-            public MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-                return new MyViewHolder(
-                        LayoutInflater.from(MainActivity.this)
-                                .inflate(R.layout.video_item_view, viewGroup, false));
-            }
-
-            @Override
-            public void onBindViewHolder(@NonNull MyViewHolder viewHolder, int i) {
-                final Video video = mVideos.get(i);
-                viewHolder.bind(MainActivity.this, video);
-            }
-
-            @Override
-            public int getItemCount() {
-                return mVideos.size();
-            }
-        });
+        mAdapter = new MyListAdapter(MainActivity.this);
+        mRv.setAdapter(mAdapter);
     }
 
     public void chooseImage() {
@@ -221,7 +183,8 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<GetVideoResponse> call, Response<GetVideoResponse> response) {
                 if(response.body()!=null&& response.isSuccessful()){
                     mVideos=response.body().getVideos();
-                    mRv.getAdapter().notifyDataSetChanged();
+                    mAdapter.setVideos(mVideos);
+                    //mRv.getAdapter().notifyDataSetChanged();
                     mBtnRefresh.setText("refresh feed");
                     mBtnRefresh.setEnabled(true);
                     Toast.makeText(MainActivity.this, "获取成功", Toast.LENGTH_SHORT).show();
