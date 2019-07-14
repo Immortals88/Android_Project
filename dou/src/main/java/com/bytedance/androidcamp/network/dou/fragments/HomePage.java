@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,7 @@ import com.scwang.smartrefresh.header.BezierCircleHeader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
+import java.sql.Ref;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +44,7 @@ public class HomePage extends Fragment {
     public Button mBtn;
     private MyListAdapter mAdapter;
     private RefreshLayout refreshLayout;
+    private SearchView searchView;
 
     private Retrofit retrofit=new Retrofit.Builder()
             .baseUrl(IMiniDouyinService.BASE_URL)
@@ -55,8 +58,11 @@ public class HomePage extends Fragment {
         View v = inflater.inflate(R.layout.fragment_homepage, container, false);
         mRv = v.findViewById(R.id.rv);
         refreshLayout = v.findViewById(R.id.RefreshLayout);
+        searchView = v.findViewById(R.id.search_view);
         initRecyclerView();
         initRefreshLayout();
+        initSearchView();
+        fetchFeed();
         return v;
     }
 
@@ -79,8 +85,35 @@ public class HomePage extends Fragment {
         refreshLayout.setRefreshHeader(new BezierCircleHeader(getContext()));
     }
 
+    private void initSearchView() {
+        searchView.setSubmitButtonEnabled(true);
+        searchView.setIconifiedByDefault(false);
+        searchView.setQueryHint("Fuck You");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                Toast.makeText(getContext(), s, Toast.LENGTH_SHORT).show();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
+
+        
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+
+                return false;
+            }
+        });
+    }
+
     public void fetchFeed() {
-        // TODO 10: get videos & update recycler list
         miniDouyinService.getVideos().enqueue(new Callback<GetVideoResponse>() {
             @Override
             public void onResponse(Call<GetVideoResponse> call, Response<GetVideoResponse> response) {
@@ -100,6 +133,7 @@ public class HomePage extends Fragment {
     }
 
 
+    // ToDo: post videos
     /* post something
     public void chooseImage() {
         Intent intent = new Intent();
@@ -152,7 +186,6 @@ public class HomePage extends Fragment {
         mBtn.setEnabled(false);
         MultipartBody.Part coverImagePart = getMultipartFromUri("cover_image", mSelectedImage);
         MultipartBody.Part videoPart = getMultipartFromUri("video", mSelectedVideo);
-        // TODO 9: post video & update buttons
         Call<PostVideoResponse> call = miniDouyinService.postVideo("3170104246","wjy",coverImagePart,videoPart);
         call.enqueue(new Callback<PostVideoResponse>() {
             @Override

@@ -15,7 +15,6 @@ import retrofit2.http.Part;
 import retrofit2.http.Query;
 
 public interface IMiniDouyinService {
-    // TODO 7: Define IMiniDouyinService
     String BASE_URL = "http://test.androidcamp.bytedance.com/mini_douyin/invoke/";
     String PATH = "video";
     @Multipart
