@@ -8,12 +8,14 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.bytedance.androidcamp.network.dou.api.IMiniDouyinService;
 import com.bytedance.androidcamp.network.dou.model.GetVideoResponse;
@@ -91,14 +93,17 @@ public class MainActivity extends AppCompatActivity {
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         public ImageView img;
+        public TextView username;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             img = itemView.findViewById(R.id.img);
+            username=itemView.findViewById(R.id.tv_username);
         }
 
         public void bind(final Activity activity, final Video video) {
             ImageHelper.displayWebImage(video.getImageUrl(), img);
+            username.setText(video.getUserName());
             img.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -110,7 +115,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void initRecyclerView() {
         mRv = findViewById(R.id.rv);
-        mRv.setLayoutManager(new LinearLayoutManager(this));
+        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+        mRv.setLayoutManager(staggeredGridLayoutManager);
         mRv.setAdapter(new RecyclerView.Adapter<MyViewHolder>() {
             @NonNull
             @Override
