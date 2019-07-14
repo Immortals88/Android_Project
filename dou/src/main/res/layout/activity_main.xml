@@ -1,55 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".Solution2C2Activity">
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/ll"
+    <android.support.v4.view.ViewPager
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="horizontal">
+        android:layout_weight="7"
+        android:layout_gravity="bottom"
+        android:id="@+id/viewPager">
 
-        <Button
-            android:id="@+id/btn"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="16dp"
-            android:layout_weight="1"
-            android:text="@string/select_an_image"
-        />
+    </android.support.v4.view.ViewPager>
 
-        <Button
-            android:id="@+id/btn_refresh"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="16dp"
-            android:layout_weight="1"
-            android:onClick="fetchFeed"
-            android:text="@string/refresh_feed"
-        />
-    </LinearLayout>
-
-    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tab"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="8"
-        android:id="@+id/RefreshLayout">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ll"/>
-
-    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
-
+        android:layout_weight="1"/>
 
 </LinearLayout>
