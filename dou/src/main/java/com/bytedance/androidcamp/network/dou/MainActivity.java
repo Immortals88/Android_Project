@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,6 +25,10 @@ import com.bytedance.androidcamp.network.dou.model.PostVideoResponse;
 import com.bytedance.androidcamp.network.dou.model.Video;
 import com.bytedance.androidcamp.network.lib.util.ImageHelper;
 import com.bytedance.androidcamp.network.dou.util.ResourceUtils;
+import com.scwang.smartrefresh.header.BezierCircleHeader;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initRecyclerView();
         initBtns();
+        initRefreshLayout();
     }
 
     private void initBtns() {
@@ -99,6 +105,19 @@ public class MainActivity extends AppCompatActivity {
         mRv.setLayoutManager(staggeredGridLayoutManager);
         mAdapter = new MyListAdapter(MainActivity.this);
         mRv.setAdapter(mAdapter);
+    }
+
+    private void initRefreshLayout() {
+        RefreshLayout refreshLayout;
+        refreshLayout = findViewById(R.id.RefreshLayout);
+        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                fetchFeed();
+                refreshLayout.finishRefresh(1000);
+            }
+        });
+        refreshLayout.setRefreshHeader(new BezierCircleHeader(this));
     }
 
     public void chooseImage() {
@@ -174,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void fetchFeed(View view) {
+    public void fetchFeed() {
         mBtnRefresh.setText("requesting...");
         mBtnRefresh.setEnabled(false);
         // TODO 10: get videos & update recycler list

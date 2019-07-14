@@ -27,4 +27,7 @@ public interface IMiniDouyinService {
     @GET(PATH)
     Call<GetVideoResponse> getVideos();
 
+    @GET(PATH)
+    Call<GetVideoResponse> getVideosWithCondition(@Query("student_id") String studentId);
+
 }
