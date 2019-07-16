@@ -11,6 +11,8 @@ import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.VideoView;
 
+import com.bytedance.androidcamp.network.dou.player.VideoPlayerIJK;
+
 public class VideoActivity extends AppCompatActivity {
 
     public static void launch(Activity activity, String url) {
@@ -22,7 +24,7 @@ public class VideoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_video);
+       /* setContentView(R.layout.activity_video);
         String url = getIntent().getStringExtra("url");
         VideoView videoView = findViewById(R.id.video_container);
         final ProgressBar progressBar = findViewById(R.id.progress_bar);
@@ -33,9 +35,10 @@ public class VideoActivity extends AppCompatActivity {
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
-                progressBar.setVisibility(View.GONE);
+               progressBar.setVisibility(View.GONE);
             }
         });
-        progressBar.setVisibility(View.VISIBLE);
+       progressBar.setVisibility(View.VISIBLE);*/
+        VideoPlayerIJK ijkPlayer = null;
     }
 }
