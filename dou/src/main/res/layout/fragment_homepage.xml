@@ -10,21 +10,45 @@
         android:layout_height="match_parent"
         android:id="@+id/RefreshLayout">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            />
+            android:background="@color/background"
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <android.support.v7.widget.SearchView
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="wrap_content"
+                    android:alpha="0.8"
+                    android:id="@+id/search_view">
+
+                </android.support.v7.widget.SearchView>
+
+                <Spinner
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:alpha="0.8"
+                    android:spinnerMode="dropdown"
+                    android:id="@+id/search_spinner">
+
+                </Spinner>
+
+            </LinearLayout>
+
+        </FrameLayout>
 
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
-
-    <android.support.v7.widget.SearchView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:alpha="0.5"
-        android:id="@+id/search_view">
-
-    </android.support.v7.widget.SearchView>
 
 </FrameLayout>
