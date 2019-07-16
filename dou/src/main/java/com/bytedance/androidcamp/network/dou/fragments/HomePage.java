@@ -1,6 +1,7 @@
 package com.bytedance.androidcamp.network.dou.fragments;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,7 +13,10 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bytedance.androidcamp.network.dou.MainActivity;
@@ -45,6 +49,7 @@ public class HomePage extends Fragment {
     private MyListAdapter mAdapter;
     private RefreshLayout refreshLayout;
     private SearchView searchView;
+    private Spinner spinner;
 
     private Retrofit retrofit=new Retrofit.Builder()
             .baseUrl(IMiniDouyinService.BASE_URL)
@@ -59,9 +64,15 @@ public class HomePage extends Fragment {
         mRv = v.findViewById(R.id.rv);
         refreshLayout = v.findViewById(R.id.RefreshLayout);
         searchView = v.findViewById(R.id.search_view);
+        spinner = v.findViewById(R.id.search_spinner);
+
+        searchView.setBackgroundColor(Color.WHITE);
+        spinner.setBackgroundColor(Color.WHITE);
+
         initRecyclerView();
         initRefreshLayout();
         initSearchView();
+        initSpinner();
         fetchFeed();
         return v;
     }
@@ -79,6 +90,8 @@ public class HomePage extends Fragment {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
                 fetchFeed();
+                searchView.setQuery("", false);
+                searchView.clearFocus();
                 refreshLayout.finishRefresh(1000);
             }
         });
@@ -88,11 +101,11 @@ public class HomePage extends Fragment {
     private void initSearchView() {
         searchView.setSubmitButtonEnabled(true);
         searchView.setIconifiedByDefault(false);
-        searchView.setQueryHint("Fuck You");
+        searchView.setQueryHint("Search");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                Toast.makeText(getContext(), s, Toast.LENGTH_SHORT).show();
+                search(s);
                 return true;
             }
 
@@ -101,17 +114,38 @@ public class HomePage extends Fragment {
                 return false;
             }
         });
-
-        
-
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-
-                return false;
-            }
-        });
     }
+
+    public void search(String s){
+        if(s.isEmpty()){
+            mAdapter.setVideos(mVideos);
+            return;
+        }
+        String searchType = spinner.getSelectedItem().toString();
+        List<Video> searchResult = new ArrayList<>();
+        for(int i = 0; i < mVideos.size(); i++){
+            switch (searchType) {
+                case "By ID":
+                    if(mVideos.get(i).getStudentId().contains(s))
+                        searchResult.add(mVideos.get(i));
+                    break;
+                case "By Name":
+                    if(mVideos.get(i).getUserName().contains(s))
+                        searchResult.add(mVideos.get(i));
+                    break;
+            }
+        }
+        mAdapter.setVideos(searchResult);
+    }
+
+    private void initSpinner() {
+        final String[] spinnerItem = {"By ID", "By Name"};
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getContext(),
+                R.layout.spinner_item, spinnerItem);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(spinnerAdapter);
+    }
+
 
     public void fetchFeed() {
         miniDouyinService.getVideos().enqueue(new Callback<GetVideoResponse>() {
