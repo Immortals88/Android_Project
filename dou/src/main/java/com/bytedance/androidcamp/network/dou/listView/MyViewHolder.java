@@ -2,8 +2,8 @@ package com.bytedance.androidcamp.network.dou.listView;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +14,8 @@ import com.bytedance.androidcamp.network.dou.R;
 import com.bytedance.androidcamp.network.dou.VideoActivity;
 import com.bytedance.androidcamp.network.dou.model.Video;
 import com.bytedance.androidcamp.network.lib.util.ImageHelper;
+
+import java.util.List;
 
 public class MyViewHolder extends RecyclerView.ViewHolder {
     private ImageView img;
@@ -30,13 +32,13 @@ public class MyViewHolder extends RecyclerView.ViewHolder {
         return new MyViewHolder(v);
     }
 
-    public void bind(final Activity activity, final Video video) {
+    public void bind(final Activity activity, final Video video, final List<String> urlList) {
         ImageHelper.displayWebImage(video.getImageUrl(), img);
         username.setText(video.getUserName() + "\n");
         img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                VideoActivity.launch(activity, video.getVideoUrl());
+                VideoActivity.launch(activity, video.getVideoUrl(), urlList);
             }
         });
     }
