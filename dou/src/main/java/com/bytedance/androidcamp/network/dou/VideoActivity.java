@@ -8,16 +8,21 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.OrientationHelper;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.os.TestLooperManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils;
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
+import com.wx.goodview.GoodView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +65,7 @@ public class VideoActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private MyAdapter mAdapter;
 
-    String DEBUGTAG = "----------->";
+    final String DEBUG_TAG = "----------->";
     MyLayoutManager myLayoutManager;
     private OrientationUtils orientationUtils;
 
@@ -75,6 +80,7 @@ public class VideoActivity extends AppCompatActivity {
 
         initView();
         initListener();
+
     }
     private void initView() {
         mRecyclerView = findViewById(R.id.recycler_video);
@@ -105,26 +111,20 @@ public class VideoActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position, boolean isNext) {
-
-                Log.i(DEBUGTAG, "selected" + position);
-
                 int index = 0;
-                if (isNext){
-                    index = 0;
-                }else {
-                    index = 1;
-                }
                 playVideo(index, position);
             }
         });
     }
 
     class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
+
         public MyAdapter(){
         }
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_view_pager,parent,false);
+
             return new ViewHolder(view);
         }
 
@@ -148,6 +148,7 @@ public class VideoActivity extends AppCompatActivity {
                     orientationUtils.resolveByClick();
                 }
             });
+            holder.videoPlayer.setLooping(true);
             //是否可以滑动调整
             holder.videoPlayer.setIsTouchWiget(true);
             //设置返回按键功能
@@ -160,6 +161,8 @@ public class VideoActivity extends AppCompatActivity {
             holder.videoPlayer.startPlayLogic();
         }
 
+
+
         @Override
         public int getItemCount() {
             return 15;
@@ -170,9 +173,67 @@ public class VideoActivity extends AppCompatActivity {
             ImageView img_play;
             StandardGSYVideoPlayer videoPlayer;
             RelativeLayout rootView;
+
+            private TextView LikeText, StarText;
+            private ImageButton LikeBtn, StarBtn;
+            private GoodView goodView;
+
+            private int likeNum;
+            private boolean isLiked = false, isStar = false;
+
             public ViewHolder(View itemView) {
                 super(itemView);
                 videoPlayer = itemView.findViewById(R.id.video_view);
+
+                LikeText = itemView.findViewById(R.id.like_text);
+                LikeBtn = itemView.findViewById(R.id.like_btn);
+                StarText = itemView.findViewById(R.id.star_text);
+                StarBtn = itemView.findViewById(R.id.star_btn);
+
+                likeNum = (int)(Math.random() * 1000);
+                goodView = new GoodView(itemView.getContext());
+
+                LikeText.setText("" + likeNum);
+
+                LikeBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(isLiked){
+                            LikeBtn.setBackground(getResources().getDrawable(R.drawable.like_white));
+                            LikeText.setText("" + (--likeNum));
+                            isLiked = false;
+                        } else {
+                            LikeBtn.setBackground(getResources().getDrawable(R.drawable.like));
+                            LikeText.setText("" + (++likeNum));
+                            showGoodView(v, R.drawable.like);
+                            isLiked = true;
+                        }
+                    }
+                });
+
+                StarBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(isStar){
+                            StarText.setText("收藏");
+                            StarBtn.setBackground(getResources().getDrawable(R.drawable.star_white));
+                            isStar = false;
+                        } else {
+                            StarText.setText("已收藏");
+                            StarBtn.setBackground(getResources().getDrawable(R.drawable.star));
+                            isStar = true;
+                            showGoodView(v, R.drawable.star);
+                        }
+                    }
+                });
+
+            }
+
+            private void showGoodView(View v, int drawableID) {
+                goodView.setImage(drawableID);
+                goodView.setWidth(200);
+                goodView.setHeight(200);
+                goodView.show(v);
             }
         }
     }

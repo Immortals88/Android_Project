@@ -11,5 +11,47 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <RelativeLayout
+        android:layout_width="50dp"
+        android:layout_height="200dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="150dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true">
+
+        <ImageButton
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/like_white"
+            android:id="@+id/like_btn"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="50dp"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:textColor="#FFFFFFFF"
+            android:id="@+id/like_text"/>
+
+        <ImageButton
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="20dp"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/star_btn"
+            android:background="@drawable/star_white"/>
+
+        <TextView
+            android:id="@+id/star_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:textSize="12sp"
+            android:textColor="#FFFFFFFF"
+            android:text="收藏"
+            android:gravity="center"/>
+
+    </RelativeLayout>
 
 </RelativeLayout>

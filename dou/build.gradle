@@ -5,12 +5,19 @@ android {
 
     defaultConfig {
         applicationId "com.bytedance.androidcamp.network.dou"
-        minSdkVersion 26
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    android {
+        compileOptions {
+            sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
+        }
     }
 
     buildTypes {
@@ -36,8 +43,13 @@ dependencies {
     // RefreshLayout
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-31'
     implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-alpha-31'
+
     // VideoPlayer
     implementation 'com.shuyu:GSYVideoPlayer:7.0.2'
+
+    // Thumb-up animation
+    implementation 'com.wx.goodview:goodview:1.0.0'
+
     implementation project(':lib')
 
 
