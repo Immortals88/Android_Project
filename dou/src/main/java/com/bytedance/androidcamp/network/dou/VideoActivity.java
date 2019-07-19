@@ -1,13 +1,16 @@
 package com.bytedance.androidcamp.network.dou;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.OrientationHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Database;
 
 import android.os.TestLooperManager;
 import android.util.Log;
@@ -19,6 +22,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bytedance.androidcamp.network.dou.database.DouDatabase;
+import com.bytedance.androidcamp.network.dou.database.UserEntity;
+import com.bytedance.androidcamp.network.dou.database.UserOperator;
+import com.bytedance.androidcamp.network.dou.model.Video;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils;
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
@@ -29,11 +36,11 @@ import java.util.List;
 
 public class VideoActivity extends AppCompatActivity {
 
-    private static List<String> allUrlList = new ArrayList<>();
+    private static List<Video> allUrlList = new ArrayList<>();
     //private List<String> playList = new ArrayList<>();
     private int playCursor;
 
-    public static void launch(Activity activity, String url, final List<String> urlList) {
+    public static void launch(Activity activity, String url, final List<Video> urlList) {
         Intent intent = new Intent(activity, VideoActivity.class);
         intent.putExtra("url", url);
         allUrlList = urlList;
@@ -65,7 +72,6 @@ public class VideoActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private MyAdapter mAdapter;
 
-    final String DEBUG_TAG = "----------->";
     MyLayoutManager myLayoutManager;
     private OrientationUtils orientationUtils;
 
@@ -75,8 +81,11 @@ public class VideoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_video);
 
         String nowUrl = getIntent().getStringExtra("url");
-        allUrlList.remove(allUrlList.indexOf(nowUrl));
-        allUrlList.add(0, nowUrl);
+        for(int i = 0; i < allUrlList.size(); i++){
+            if(nowUrl.equals(allUrlList.get(i).getVideoUrl())) {
+                allUrlList.add(0, allUrlList.remove(i));
+            }
+        }
 
         initView();
         initListener();
@@ -120,9 +129,11 @@ public class VideoActivity extends AppCompatActivity {
     class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
 
         public MyAdapter(){
+
         }
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_view_pager,parent,false);
 
             return new ViewHolder(view);
@@ -159,6 +170,8 @@ public class VideoActivity extends AppCompatActivity {
                 }
             });
             holder.videoPlayer.startPlayLogic();
+
+            holder.bind(allUrlList.get(position).getUserName());
         }
 
 
@@ -181,8 +194,11 @@ public class VideoActivity extends AppCompatActivity {
             private int likeNum;
             private boolean isLiked = false, isStar = false;
 
+            private UserOperator operator;
+
             public ViewHolder(View itemView) {
                 super(itemView);
+
                 videoPlayer = itemView.findViewById(R.id.video_view);
 
                 LikeText = itemView.findViewById(R.id.like_text);
@@ -210,23 +226,55 @@ public class VideoActivity extends AppCompatActivity {
                         }
                     }
                 });
+            }
+
+            @SuppressLint("StaticFieldLeak")
+            public void bind(final String name){
+                Log.i(MyConstants.DEBUG_TAG, name);
+
+                new AsyncTask<String, Integer, Boolean>() {
+                    @Override
+                    protected Boolean doInBackground(String... strings) {
+                        return DouDatabase.getDatabase(getApplicationContext()).getUserEntityDao().isInStarList(name);
+                    }
+
+                    @Override
+                    protected void onPostExecute(Boolean result) {
+                        super.onPostExecute(result);
+                        if(result){
+                            StarText.setText("已收藏");
+                            StarBtn.setBackground(getResources().getDrawable(R.drawable.star));
+                            isStar = true;
+                        }
+                    }
+                }.execute(name);
 
                 StarBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if(isStar){
+
                             StarText.setText("收藏");
                             StarBtn.setBackground(getResources().getDrawable(R.drawable.star_white));
                             isStar = false;
+
+                            Log.i(MyConstants.DEBUG_TAG, "deleteTask" + name);
+                            DeleteTask deleteTask = new DeleteTask();
+                            deleteTask.execute(name);
+
                         } else {
+
                             StarText.setText("已收藏");
                             StarBtn.setBackground(getResources().getDrawable(R.drawable.star));
                             isStar = true;
                             showGoodView(v, R.drawable.star);
+
+                            Log.i(MyConstants.DEBUG_TAG, "addTask" + name);
+                            AddTask addTask = new AddTask();
+                            addTask.execute(name);
                         }
                     }
                 });
-
             }
 
             private void showGoodView(View v, int drawableID) {
@@ -250,7 +298,7 @@ public class VideoActivity extends AppCompatActivity {
 
         View itemView = mRecyclerView.getChildAt(0);
         final StandardGSYVideoPlayer videoPlayer = itemView.findViewById(R.id.video_view);
-        videoPlayer.setUp(allUrlList.get(cursor), false, "返回首页");
+        videoPlayer.setUp(allUrlList.get(cursor).getVideoUrl(), false, "返回首页");
         videoPlayer.startPlayLogic();
 
     }
@@ -263,4 +311,22 @@ public class VideoActivity extends AppCompatActivity {
         }
     }
 
+    private class AddTask extends AsyncTask<String, Integer, Boolean>{
+        @Override
+        protected Boolean doInBackground(String... strings) {
+            UserEntity newStar = new UserEntity(strings[0]);
+            DouDatabase.getDatabase(getApplicationContext()).getUserEntityDao().add(newStar);
+            return true;
+        }
+    }
+
+    private class DeleteTask extends AsyncTask<String, Integer, Boolean> {
+        @Override
+        protected Boolean doInBackground(String... strings) {
+            UserEntity userEntity;
+            userEntity = DouDatabase.getDatabase(getApplicationContext()).getUserEntityDao().entityInList(strings[0]);
+            DouDatabase.getDatabase(getApplicationContext()).getUserEntityDao().delete(userEntity);
+            return true;
+        }
+    }
 }

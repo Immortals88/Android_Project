@@ -32,7 +32,7 @@ public class MyViewHolder extends RecyclerView.ViewHolder {
         return new MyViewHolder(v);
     }
 
-    public void bind(final Activity activity, final Video video, final List<String> urlList) {
+    public void bind(final Activity activity, final Video video, final List<Video> urlList) {
         ImageHelper.displayWebImage(video.getImageUrl(), img);
         username.setText(video.getUserName() + "\n");
         img.setOnClickListener(new View.OnClickListener() {

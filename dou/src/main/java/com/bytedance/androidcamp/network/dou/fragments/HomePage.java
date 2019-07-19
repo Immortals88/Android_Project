@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.bytedance.androidcamp.network.dou.MyConstants;
 import com.bytedance.androidcamp.network.dou.R;
 import com.bytedance.androidcamp.network.dou.api.IMiniDouyinService;
 import com.bytedance.androidcamp.network.dou.listView.MyListAdapter;
@@ -150,13 +151,14 @@ public class HomePage extends Fragment {
                 if(response.body()!=null && response.isSuccessful()){
                     mVideos=response.body().getVideos();
                     mAdapter.setVideos(mVideos);
-                    Toast.makeText(getContext(), "获取成功", Toast.LENGTH_SHORT).show();
+                    MyConstants.videoList = mVideos;
+                    //Toast.makeText(getContext(), "获取成功", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<GetVideoResponse> call, Throwable throwable) {
-                Toast.makeText(getContext(), "获取失败", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "获取失败", Toast.LENGTH_SHORT).show();
             }
         });
 

@@ -2,6 +2,9 @@ package com.bytedance.androidcamp.network.dou;
 
 import android.os.Bundle;
 import androidx.annotation.Nullable;
+
+import com.bytedance.androidcamp.network.dou.fragments.MyInfoPage;
+import com.bytedance.androidcamp.network.dou.fragments.Postpage;
 import com.google.android.material.tabs.TabLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -28,11 +31,13 @@ public class MainActivity extends AppCompatActivity {
 
         fragList = new ArrayList<>();
         fragList.add(new HomePage());
-        fragList.add(new Fragment());
+        fragList.add(new Postpage());
+        fragList.add(new MyInfoPage());
 
         titleList = new ArrayList<>();
-        titleList.add("HomePage");
+        titleList.add("Home");
         titleList.add("Hello");
+        titleList.add("Me");
 
         pager = findViewById(R.id.viewPager);
         pager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
