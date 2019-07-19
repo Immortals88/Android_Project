@@ -42,6 +42,11 @@ public class MyInfoPage extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_myinfo, container, false);
 
+        TextView userNameText = v.findViewById(R.id.user_name);
+        userNameText.setText(MyConstants.StuentName);
+        TextView userIDText = v.findViewById(R.id.user_id);
+        userIDText.setText(MyConstants.StudentID);
+
         imageBg = v.findViewById(R.id.myinfo_bg);
         Glide.with(getActivity())
                 .load(R.drawable.info_bg)

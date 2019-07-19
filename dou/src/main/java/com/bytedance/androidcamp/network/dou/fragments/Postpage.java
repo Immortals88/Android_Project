@@ -35,10 +35,12 @@ import android.widget.VideoView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bytedance.androidcamp.network.dou.MainActivity;
+import com.bytedance.androidcamp.network.dou.MyConstants;
 import com.bytedance.androidcamp.network.dou.R;
 import com.bytedance.androidcamp.network.dou.api.IMiniDouyinService;
 import com.bytedance.androidcamp.network.dou.model.PostVideoResponse;
 import com.bytedance.androidcamp.network.dou.util.ResourceUtils;
+import com.bytedance.androidcamp.network.dou.util.utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -81,6 +83,10 @@ public class Postpage extends Fragment {
             .build();
     private IMiniDouyinService miniDouyinService=retrofit.create(IMiniDouyinService.class);
 
+    private String[] permissions = new String[] {
+            Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -120,6 +126,11 @@ public class Postpage extends Fragment {
         filePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!utils.isPermissionsReady(getActivity(), permissions)){
+                    utils.reuqestPermissions(getActivity(), permissions, MyConstants.REQUEST_EXTERNAL_STORAGE);
+                    return;
+                }
+
                 String s = mBtn.getText().toString();
                 if (getString(R.string.select_an_image).equals(s)) {
                     chooseImage();
@@ -270,7 +281,7 @@ public class Postpage extends Fragment {
         mBtn.setEnabled(false);
         MultipartBody.Part coverImagePart = getMultipartFromUri("cover_image", mSelectedImage);
         MultipartBody.Part videoPart = getMultipartFromUri("video", mSelectedVideo);
-        Call<PostVideoResponse> call = miniDouyinService.postVideo("3170104246","wjy",coverImagePart,videoPart);
+        Call<PostVideoResponse> call = miniDouyinService.postVideo(MyConstants.StudentID,MyConstants.StuentName,coverImagePart,videoPart);
         call.enqueue(new Callback<PostVideoResponse>() {
             @Override
             public void onResponse(Call<PostVideoResponse> call, Response<PostVideoResponse> response) {

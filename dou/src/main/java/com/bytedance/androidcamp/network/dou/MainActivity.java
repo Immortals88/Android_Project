@@ -35,9 +35,9 @@ public class MainActivity extends AppCompatActivity {
         fragList.add(new MyInfoPage());
 
         titleList = new ArrayList<>();
-        titleList.add("Home");
-        titleList.add("Hello");
-        titleList.add("Me");
+        titleList.add("首页");
+        titleList.add("上传");
+        titleList.add("我的");
 
         pager = findViewById(R.id.viewPager);
         pager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {

@@ -242,7 +242,7 @@ public class VideoActivity extends AppCompatActivity {
                     protected void onPostExecute(Boolean result) {
                         super.onPostExecute(result);
                         if(result){
-                            StarText.setText("已收藏");
+                            StarText.setText("已关注");
                             StarBtn.setBackground(getResources().getDrawable(R.drawable.star));
                             isStar = true;
                         }
@@ -254,7 +254,7 @@ public class VideoActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         if(isStar){
 
-                            StarText.setText("收藏");
+                            StarText.setText("关注");
                             StarBtn.setBackground(getResources().getDrawable(R.drawable.star_white));
                             isStar = false;
 
@@ -264,7 +264,7 @@ public class VideoActivity extends AppCompatActivity {
 
                         } else {
 
-                            StarText.setText("已收藏");
+                            StarText.setText("已关注");
                             StarBtn.setBackground(getResources().getDrawable(R.drawable.star));
                             isStar = true;
                             showGoodView(v, R.drawable.star);
